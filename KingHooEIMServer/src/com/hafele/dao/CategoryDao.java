@@ -36,7 +36,6 @@ public class CategoryDao extends BaseDao {
 	
 	/**
 	 * getListByIdAndType: 根据所属者ID和type来获取list	<br/>
-	 * @author Dragon Wem
 	 * @param loginName  所属者ID
 	 * @param type     类型（好友、群组）
 	 * @return List	<br/>
@@ -87,7 +86,7 @@ public class CategoryDao extends BaseDao {
 	 */
 	private Category getRecentCate(String senderId, String type) {
 		try {
-			String sql = "select max(C.id) from Tab_Um_Category C "
+			String sql = "select max(C.cl_ID) from Tab_Um_Category C "
 					+ "where C.cl_LoginName = "+senderId+" and C.cl_Type = '"+type+"' ";
 			ResultSet result = select(sql);
 			if (null != result && result.next()) {
@@ -95,11 +94,26 @@ public class CategoryDao extends BaseDao {
 				return getById(maxId);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	/**
+	 * 重命名分组名称
+	 * @param id 主键 分组ID
+	 * @param name 分组名称
+	 * @return
+	 */
+	public Category editCategory(String id, String name) {
+		String sql = "update Tab_Um_Category set cl_Name = '"+name+"' where cl_ID = " + Integer.valueOf(id);
+		int num = operate(sql);
+		if (num > 0) {
+			return getById(id);
+		}
+		return null;
+	}
+
 
 	//组装数据
 	private Category assembleCategory(ResultSet result) {
@@ -115,5 +129,4 @@ public class CategoryDao extends BaseDao {
 		}
 		return null;
 	}
-
 }

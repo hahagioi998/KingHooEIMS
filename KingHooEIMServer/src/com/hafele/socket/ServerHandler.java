@@ -145,6 +145,16 @@ public class ServerHandler implements ChannelInboundHandler {
 			backMsg.setStatus(Constants.SUCCESS);
 			Server.sendMsg(channel, backMsg);
 		}
+		//重命名分组
+		if(message != null && Constants.EDIT_USER_CATE_MSG.equals(message.getType())) {
+			String content[] = message.getContent().split(Constants.LEFT_SLASH);
+			Category category = categoryDao.editCategory(content[0],content[1]);
+			Message backMsg = new Message();
+			backMsg.setType(Constants.PALIND_MSG);
+			backMsg.setPalindType(Constants.EDIT_USER_CATE_MSG);
+			backMsg.setCategory(category);
+			Server.sendMsg(channel, backMsg);
+		}
 	}
 
 	//登录事件处理
