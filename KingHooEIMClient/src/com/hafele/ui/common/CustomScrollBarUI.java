@@ -60,6 +60,7 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
 	protected JButton createIncreaseButton(int orientation) {
 		JButton button = new JButton(PictureUtil.getPicture("down.png"));
 		button.setBorder(null);
+		button.setVisible(false);//找不到合适的图标，干脆不显示了
 		return button;
 	}
 	
@@ -67,6 +68,7 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
 	protected JButton createDecreaseButton(int orientation) {
 		JButton button = new JButton(PictureUtil.getPicture("up.png"));
 		button.setBorder(null);
+		button.setVisible(false);//找不到合适的图标，干脆不显示了
 		return button;
 	}
 }

@@ -15,6 +15,7 @@ import com.hafele.bean.Message;
 import com.hafele.bean.User;
 import com.hafele.ui.common.CategoryNode;
 import com.hafele.ui.contacts.ContactsNode;
+import com.hafele.ui.frame.AddContactsWindow;
 import com.hafele.ui.frame.LoginWindow;
 import com.hafele.ui.frame.MainWindow;
 import com.hafele.util.Constants;
@@ -49,7 +50,7 @@ public class Client {
 	/** ×¢²á¿ò */
 
 	/** Ìí¼ÓºÃÓÑ¿ò */
-
+	private AddContactsWindow addContactsWindow;
 	/** ÁÄÌìÊÒ */
 
 	/** ÏµÍ³ÍÐÅÌ */
@@ -136,6 +137,14 @@ public class Client {
 		this.login = login;
 	}
 	
+	public AddContactsWindow getAddContactsWindow() {
+		return addContactsWindow != null ? addContactsWindow : null;
+	}
+
+	public void setAddContactsWindow(AddContactsWindow addContactsWindow) {
+		this.addContactsWindow = addContactsWindow;
+	}
+
 	public Channel getChannel() {
 		return channel;
 	}

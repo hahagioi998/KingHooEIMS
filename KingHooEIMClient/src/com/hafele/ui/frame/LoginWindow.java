@@ -20,8 +20,10 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -34,6 +36,7 @@ import com.hafele.ui.common.CustomOptionPane;
 import com.hafele.util.Constants;
 import com.hafele.util.PictureUtil;
 import com.hafele.util.StringHelper;
+import java.awt.Label;
 
 /**
 * @author Dragon Wen E-mail:18475536452@163.com
@@ -81,6 +84,7 @@ public class LoginWindow extends JDialog {
 	private SystemTray tray;
 	/** 客户端核心 */
 	private Client client;
+	private JLabel startIcon;
 	
 	public static LoginWindow getInstance(Client client) {
 		LoginWindow inst = new LoginWindow(client);
@@ -102,7 +106,7 @@ public class LoginWindow extends JDialog {
 		if (SystemTray.isSupported()) {
 			try {
 				tray = SystemTray.getSystemTray(); //系统托盘类采用的是单例模式。获取系统托盘对象
-				icon = new TrayIcon(PictureUtil.getPicture("icon_120px.png").getImage(), "HAFELE—IM");
+				icon = new TrayIcon(PictureUtil.getPicture("icon_login_120px.png").getImage(), "HAFELE—IM");
 				icon.setImageAutoSize(true); //自动适应大小
 				icon.addMouseListener(new MouseAdapter() {
 					@Override
@@ -193,9 +197,9 @@ public class LoginWindow extends JDialog {
 			
 			//头像
 			pictureLabel = new JLabel("");
-			pictureLabel.setIcon(PictureUtil.getPicture("HeadPortraits_100px.png"));
+			pictureLabel.setIcon(PictureUtil.getPicture("defaultHeadPicture/HeadPortraits6_100px.png"));
 			pictureLabel.setBounds(42, 175, 100, 100);
-			pictureLabel.setBorder(Constants.LIGHT_GRAY_BORDER);
+			pictureLabel.setBorder(null);
 			contentPanel.add(pictureLabel);
 			
 			//用户名文本框
@@ -245,6 +249,11 @@ public class LoginWindow extends JDialog {
 			passwordIcon.setIcon(PictureUtil.getPicture("passwordIcon_30px.png"));
 			passwordIcon.setBounds(157, 208, 30, 30);
 			contentPanel.add(passwordIcon);
+			
+			startIcon = new JLabel("");
+			startIcon.setBounds(80, 80, 15, 15);
+			startIcon.setIcon(PictureUtil.getPicture("state/online_15px.png"));
+			pictureLabel.add(startIcon);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -254,6 +263,7 @@ public class LoginWindow extends JDialog {
 	//事件监听
 	private void initListener() {
 		// 主窗体事件
+		// 由于取消了默认的窗体结构，所以我们要手动设置一下移动窗体的方法
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -431,6 +441,54 @@ public class LoginWindow extends JDialog {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				login();
+			}
+		});
+		
+		startIcon.addMouseListener(new MouseAdapter() {
+			//鼠标离开组件时调用。
+			@Override
+			public void mouseExited(MouseEvent e) {
+				startIcon.setBorder(null);
+			}
+			//鼠标进入到组件上时调用。
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				startIcon.setBorder(Constants.LIGHT_GRAY_BORDER);
+			}
+			//鼠标按键在组件上单击（按下并释放）时调用。
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JPopupMenu jpm = new JPopupMenu();
+				jpm.setBackground(Constants.BACKGROUND_COLOR);
+				jpm.setBorder(Constants.LIGHT_GRAY_BORDER);
+				JMenuItem hiding = new JMenuItem("隐身");
+				hiding.setIcon(PictureUtil.getPicture("state/hiding_15px.png"));
+				hiding.setFont(Constants.BASIC_FONT);
+				JMenuItem noDisturbing = new JMenuItem("请勿打扰");
+				noDisturbing.setIcon(PictureUtil.getPicture("state/noDisturbing_15px.png"));
+				noDisturbing.setFont(Constants.BASIC_FONT);
+				JMenuItem busy = new JMenuItem("忙碌");
+				busy.setIcon(PictureUtil.getPicture("state/busy_15px.png"));
+				busy.setFont(Constants.BASIC_FONT);
+				JMenuItem leave = new JMenuItem("离开");
+				leave.setIcon(PictureUtil.getPicture("state/leave_15px.png"));
+				leave.setFont(Constants.BASIC_FONT);
+				JMenuItem QMe = new JMenuItem("Q我吧");
+				QMe.setIcon(PictureUtil.getPicture("state/QMe_15px.png"));
+				QMe.setFont(Constants.BASIC_FONT);
+				JMenuItem online = new JMenuItem("在线");
+				online.setIcon(PictureUtil.getPicture("state/online_15px.png"));
+				online.setFont(Constants.BASIC_FONT);
+				
+				jpm.add(online);
+				jpm.add(QMe);
+				jpm.addSeparator();
+				jpm.add(leave);
+				jpm.add(busy);
+				jpm.add(noDisturbing);
+				jpm.addSeparator();
+				jpm.add(hiding);
+				jpm.show(startIcon, e.getX(), e.getY());
 			}
 		});
 	}

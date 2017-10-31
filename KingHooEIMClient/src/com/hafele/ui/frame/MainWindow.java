@@ -12,8 +12,8 @@ import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -169,12 +169,12 @@ public class MainWindow extends JDialog {
 			titlePanel.setLayout(null);
 			
 			titlePicture = new JLabel("");
-			titlePicture.setBounds(10, 5, 20, 15);
-			titlePicture.setIcon(PictureUtil.getPicture("A.png"));
+			titlePicture.setBounds(10, 2, 20, 20);
+			titlePicture.setIcon(PictureUtil.getPicture("QQ_20px.png"));
 			titlePanel.add(titlePicture);
 			
-			title = new JLabel("H'A'FELE");
-			title.setForeground(Color.WHITE);
+			title = new JLabel("<html>H<span style=\"color:#D4003B\">'A'</span>FELE</html>");
+			title.setForeground(new Color(141, 140, 138));
 			title.setFont(Constants.BASIC_FONTT14);
 			title.setBounds(40, 2, 60, 20);
 			titlePanel.add(title);
@@ -202,7 +202,8 @@ public class MainWindow extends JDialog {
 			
 			headPicture = new JLabel("");
 			headPicture.setBounds(10, 23, 60, 60);
-			headPicture.setIcon(PictureUtil.getPicture("HeadPortraits_60px.png"));
+			headPicture.setBorder(null);
+			headPicture.setIcon(PictureUtil.getPicture(user.getHeadPicture().trim()+"_60px.png"));
 			baseInfoPanel.add(headPicture);
 			
 			state = new JLabel("");
@@ -228,7 +229,7 @@ public class MainWindow extends JDialog {
 			signatureField.setFont(Constants.BASIC_FONT);
 			signatureField.setBounds(80, 40, 191, 20);
 			signatureField.setBorder(null);
-			signatureField.setText(user.getSignature());
+
 			signatureField.setVisible(false);
 			baseInfoPanel.add(signatureField);
 			
@@ -431,30 +432,24 @@ public class MainWindow extends JDialog {
 			}
 			@Override  
             public void mouseClicked(MouseEvent e) {// 鼠标单击事件  
-				if (e.getButton() == MouseEvent.BUTTON1) { // 判断是鼠标左键按下
-					
-					if(signatureLabel.getText().trim().equals(user.getSignature())) {
-						
-					} else {
-						CustomOptionPane.showMessageDialog(client.getMainWindow(), "确定要保存个性签名", "提示");
-						user.setSignature(signatureField.getText().trim());
-						signatureLabel.setText(user.getSignature());
+				if(e.getClickCount() == 1) {
+					if(signatureField.isVisible()) {
+						if(!"".equals(signatureField.getText())) {
+							CustomOptionPane.showMessageDialog(client.getMainWindow(), "确定要保存个性签名", "提示");
+							user.setSignature(signatureField.getText().trim());
+							signatureLabel.setText(user.getSignature());
+						}
+						signatureField.setVisible(false);
+						signatureLabel.setVisible(true);
 					}
-					if(searchField.getText().equals("")) {
+					if(searchFieldPanel.isVisible()) {
+						if(!"".equals(searchField.getText())) {
+							
+						}
 						searchLabelPanel.setVisible(true);
 						searchFieldPanel.setVisible(false);
-					} else {
-						System.err.println("false");
 					}
-                	signatureField.requestFocus(false);
-                	signatureLabel.setVisible(true);
-    				signatureField.setVisible(false);
-    				
-                } else if (e.getButton() == MouseEvent.BUTTON3) { // 判断是鼠标右键按下  
-                	
-                } else { //滚轴
-                	
-                }  
+				}
 			}
 		});
 		this.addMouseMotionListener(new MouseAdapter() {
@@ -463,6 +458,34 @@ public class MainWindow extends JDialog {
 				Point p = getLocation();
 				setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
 			}
+		});
+		
+		//个性签名编辑框键盘监听事件
+		signatureField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(signatureField.isVisible()) {
+						System.out.println("当前个性签名正在编辑");
+					}
+					signatureField.setVisible(false);
+					signatureLabel.setVisible(true);
+				}
+			}
+		});
+		
+		//搜索输入框面板键盘监听事件
+		searchField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(searchFieldPanel.isVisible()) {
+						System.out.println("当前正在执行搜索功能");
+					}
+					searchFieldPanel.setVisible(false);
+					searchLabelPanel.setVisible(true);
+				}
+			}	
 		});
 		
 		//关闭按钮
@@ -613,33 +636,6 @@ public class MainWindow extends JDialog {
 				signatureLabel.setVisible(false);
 				signatureField.setVisible(true);
 				signatureField.requestFocus(true);
-			}
-		});
-		
-		//个性签名输入框焦点
-		signatureField.addFocusListener(new FocusListener() {
-			//失去焦点
-			@Override
-			public void focusLost(FocusEvent e) {
-				
-			}
-			//得到焦点
-			@Override
-			public void focusGained(FocusEvent e) {
-				
-			}
-		});
-		
-		//个性签名输入框鼠标事件
-		signatureField.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-                
 			}
 		});
 		

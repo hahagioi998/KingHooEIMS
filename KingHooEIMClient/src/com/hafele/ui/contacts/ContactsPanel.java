@@ -33,6 +33,7 @@ import com.hafele.ui.common.CategoryNode;
 import com.hafele.ui.common.CustomOptionPane;
 import com.hafele.ui.common.CustomScrollBarUI;
 import com.hafele.ui.common.CustomTreeUI;
+import com.hafele.ui.frame.AddContactsWindow;
 import com.hafele.util.Constants;
 import com.hafele.util.PictureUtil;
 
@@ -229,6 +230,26 @@ public class ContactsPanel extends JPanel {
 							JMenuItem rename = new JMenuItem("重命名");
 							rename.setOpaque(false);
 							rename.setFont(Constants.BASIC_FONT);
+							//刷新好友列表
+							updateContactsList.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									
+								}
+							});
+							//添加好友
+							addCategory.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									if(selfClient.getAddContactsWindow() != null) {
+										AddContactsWindow inst = AddContactsWindow.getInstance(selfClient, ((CategoryNode)object).category.getId(), selfClient.getUser());
+										selfClient.setAddContactsWindow(inst);
+									} else {
+										CustomOptionPane.showMessageDialog(selfClient.getAddContactsWindow(), "窗体已经打开。", "提示");
+										selfClient.getAddContactsWindow().requestFocus();
+									}
+								}
+							});
 							//添加分组
 							addCategory.addActionListener(new ActionListener() {
 								@Override
@@ -244,12 +265,23 @@ public class ContactsPanel extends JPanel {
 							deleteCategory.addActionListener(new ActionListener() {
 								@Override
 								public void actionPerformed(ActionEvent e) {
-									CategoryNode categoryNode = (CategoryNode) object;
-									if(categoryNode.category.getGroupName().equals(Constants.DEFAULT_CATE)) {
+									Category category = ((CategoryNode)object).category;
+									if(category.getGroupName().equals(Constants.DEFAULT_CATE)) {
 										CustomOptionPane.showMessageDialog(selfClient.getMainWindow(), "默认分组不能删除", "提示");
 										return;
 									}
-									
+									int result = CustomOptionPane.showConfirmDialog(selfClient.getMainWindow(), 
+											"删除分组", "删除分组之后，分组下面的成员也会被删掉，也会将您从对方的好友列表里删除!", "确定", "取消");
+									if(result == Constants.YES_OPTION) {
+										Message message = new Message();
+										message.setType(Constants.DELETE_USER_CATE_MSG);
+										message.setSenderId(selfClient.getUser().getLoginName());
+										message.setSenderName(selfClient.getUser().getName());
+										message.setContent(category.getGroupName() + Constants.LEFT_SLASH + category.getGroupName());
+										selfClient.sendMsg(message);
+									}else {
+										return;
+									}
 								}
 							});
 							//重命名分组
@@ -335,21 +367,21 @@ public class ContactsPanel extends JPanel {
 	//加载数据
 	private void loadJTree() {
 		for (Category category : selfClient.getCategoryList()) {
-			CategoryNode cate = new CategoryNode(PictureUtil.getPicture("arrow_left.png"), category);
+			CategoryNode categoryNode = new CategoryNode(PictureUtil.getPicture("arrow_left.png"), category);
 			for (Map<String, List<User>> map : selfClient.getCategoryMemberList()) {
 				List<User> list = map.get(category.getId());
 				if (null != list && list.size() > 0) {
 					for (User friend : list) {
-						ContactsNode buddy = new ContactsNode(PictureUtil.getPicture("HeadPortraits_40px.png"), friend);
-						cate.add(buddy);
+						ContactsNode buddy = new ContactsNode(PictureUtil.getPicture(friend.getHeadPicture() + "_40px.png"), friend);
+						categoryNode.add(buddy);
 						// 更新client中好友节点的map，放到client中，为了方便统一调用
 						selfClient.buddyNodeMap.put(friend.getName(), buddy);
 					}
 				}
 			}
-			root.add(cate);
+			root.add(categoryNode);
 			// 更新client中好友分组的map，放到client中，为了方便统一调用
-			selfClient.cateNodeMap.put(cate.category.getId(), cate);
+			selfClient.cateNodeMap.put(categoryNode.category.getId(), categoryNode);
 		}
 	}
 }
