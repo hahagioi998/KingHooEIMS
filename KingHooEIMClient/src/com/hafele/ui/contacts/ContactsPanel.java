@@ -30,7 +30,7 @@ import com.hafele.bean.Message;
 import com.hafele.bean.User;
 import com.hafele.socket.Client;
 import com.hafele.ui.common.CategoryNode;
-import com.hafele.ui.common.CustomOptionPane;
+import com.hafele.ui.common.CustomOptionPanel;
 import com.hafele.ui.common.CustomScrollBarUI;
 import com.hafele.ui.common.CustomTreeUI;
 import com.hafele.ui.frame.AddContactsWindow;
@@ -238,14 +238,14 @@ public class ContactsPanel extends JPanel {
 								}
 							});
 							//添加好友
-							addCategory.addActionListener(new ActionListener() {
+							addContacts.addActionListener(new ActionListener() {
 								@Override
 								public void actionPerformed(ActionEvent e) {
-									if(selfClient.getAddContactsWindow() != null) {
+									if(selfClient.getAddContactsWindow() == null) {
 										AddContactsWindow inst = AddContactsWindow.getInstance(selfClient, ((CategoryNode)object).category.getId(), selfClient.getUser());
 										selfClient.setAddContactsWindow(inst);
 									} else {
-										CustomOptionPane.showMessageDialog(selfClient.getAddContactsWindow(), "窗体已经打开。", "提示");
+										CustomOptionPanel.showMessageDialog(selfClient.getAddContactsWindow(), "窗体已经打开。", "提示");
 										selfClient.getAddContactsWindow().requestFocus();
 									}
 								}
@@ -267,10 +267,10 @@ public class ContactsPanel extends JPanel {
 								public void actionPerformed(ActionEvent e) {
 									Category category = ((CategoryNode)object).category;
 									if(category.getGroupName().equals(Constants.DEFAULT_CATE)) {
-										CustomOptionPane.showMessageDialog(selfClient.getMainWindow(), "默认分组不能删除", "提示");
+										CustomOptionPanel.showMessageDialog(selfClient.getMainWindow(), "默认分组不能删除", "提示");
 										return;
 									}
-									int result = CustomOptionPane.showConfirmDialog(selfClient.getMainWindow(), 
+									int result = CustomOptionPanel.showConfirmDialog(selfClient.getMainWindow(), 
 											"删除分组", "删除分组之后，分组下面的成员也会被删掉，也会将您从对方的好友列表里删除!", "确定", "取消");
 									if(result == Constants.YES_OPTION) {
 										Message message = new Message();
@@ -290,7 +290,7 @@ public class ContactsPanel extends JPanel {
 								public void actionPerformed(ActionEvent e) {
 									CategoryNode categoryNode = (CategoryNode) object;
 									if(categoryNode.category.getGroupName().equals(Constants.DEFAULT_CATE)) {
-										CustomOptionPane.showMessageDialog(selfClient.getMainWindow(), "默认分组不允许重命名", "提示");
+										CustomOptionPanel.showMessageDialog(selfClient.getMainWindow(), "默认分组不允许重命名", "提示");
 										return;
 									}
 									jTree.setEditable(true);

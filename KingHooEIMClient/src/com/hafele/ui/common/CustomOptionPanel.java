@@ -19,7 +19,7 @@ import com.hafele.util.PictureUtil;
 * @version 创建时间：2017年10月18日 下午3:52:18
 * 自定义弹出框
 */
-public class CustomOptionPane {
+public class CustomOptionPanel {
 	private static int result = 0;
 
 	/**

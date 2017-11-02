@@ -6,7 +6,8 @@ import java.nio.charset.Charset;
 import com.hafele.bean.Category;
 import com.hafele.bean.Message;
 import com.hafele.ui.common.CategoryNode;
-import com.hafele.ui.common.CustomOptionPane;
+import com.hafele.ui.common.CustomOptionPanel;
+import com.hafele.ui.contacts.ContactsNode;
 import com.hafele.ui.frame.MainWindow;
 import com.hafele.util.Constants;
 import com.hafele.util.JsonUtil;
@@ -55,6 +56,7 @@ public class ClientHandler implements ChannelInboundHandler {
 		System.out.println(ctx.channel().remoteAddress() + "服务器挂了！");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		// TODO Auto-generated method stub
@@ -79,11 +81,31 @@ public class ClientHandler implements ChannelInboundHandler {
 					MainWindow mainWindow = MainWindow.getInstance(client);
 					client.setMainWindow(mainWindow);
 				} else {
-					CustomOptionPane.showMessageDialog(client.getLogin(), message.getContent(), "友情提示");
+					CustomOptionPanel.showMessageDialog(client.getLogin(), message.getContent(), "友情提示");
 				}
 			}
 		}
-		//添加群组
+		//添加好友
+		if(Constants.REQUEST_ADD_MSG.equals(message.getPalindType())) {
+			if(Constants.SUCCESS.equals(message.getStatus())) {
+				if(client.getAddContactsWindow() != null) {
+					CustomOptionPanel.showMessageDialog(client.getAddContactsWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
+					client.getAddContactsWindow().dispose();
+					client.setAddContactsWindow(null);
+				} else {
+					CustomOptionPanel.showMessageDialog(client.getMainWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
+				}
+				//将数据更新到最新
+				client.setUser(message.getUser());
+				client.setCategoryList(message.getCategoryList());
+				client.setCategoryMemberList(message.getCategoryMemberList());
+				//刷新tree
+				CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
+				ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
+				
+			}
+		}
+		//添加分组
 		if (Constants.ADD_USER_CATE_MSG.equals(message.getPalindType())) {
 			Category category = message.getCategory();
 			CategoryNode categoryNode = new CategoryNode(PictureUtil.getPicture("arrow_left.png"), category);

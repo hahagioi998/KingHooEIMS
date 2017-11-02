@@ -76,4 +76,15 @@ public class UserDao extends BaseDao {
 		return assembleUser(result);
 	}
 
+	/**
+	 * getListByUIdAndName: 搜索用户	<br/>
+	 * @param content	用户ID或用户名称（数据库记录ID）
+	 * @return User	<br/>
+	 * @since JDK 1.8
+	 */
+	public User getListByUIdAndName(String content) {
+		String sql = "select cl_LoginName, cl_Name, cl_Note, cl_HeadPicture from Tab_Um_User where cl_LoginName = '"+content+"' or cl_Name = '"+content+"'";
+		ResultSet result = select(sql);
+		return assembleUser(result);
+	}
 }

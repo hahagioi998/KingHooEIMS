@@ -61,7 +61,7 @@ public class Client {
 	private DefaultTreeModel buddyModel;
 	/** 好友treeRoot */
 	private DefaultMutableTreeNode buddyRoot;
-
+	
 	/** key：好友名称 value：tab块 */
 
 	/** key：好友名称 value：node节点 */
@@ -71,12 +71,12 @@ public class Client {
 	/** key：好友名称 value：消息浏览状态 （用于确定头像的闪动） */
 	
 	/** key：好友名称 value：消息队列 （便于放到聊天窗中） */
-
+	
 	// 自身信息
 	private User user;
 	private List<Category> categoryList;
 	private List<Map<String, List<User>>> categoryMemberList;
-
+	
 	public Client() {
 		final ClientHandler clientHandler = new ClientHandler(this);
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -176,7 +176,7 @@ public class Client {
 	public void setBuddyRoot(DefaultMutableTreeNode buddyRoot) {
 		this.buddyRoot = buddyRoot;
 	}
-	
+
 	public Map<String, CategoryNode> getCateNodeMap() {
 		return cateNodeMap;
 	}
@@ -184,6 +184,15 @@ public class Client {
 	public void setCateNodeMap(Map<String, CategoryNode> cateNodeMap) {
 		this.cateNodeMap = cateNodeMap;
 	}
+	
+	public Map<String, ContactsNode> getBuddyNodeMap() {
+		return buddyNodeMap;
+	}
+
+	public void setBuddyNodeMap(Map<String, ContactsNode> buddyNodeMap) {
+		this.buddyNodeMap = buddyNodeMap;
+	}
+
 
 	public User getUser() {
 		return user;
@@ -208,4 +217,5 @@ public class Client {
 	public void setCategoryMemberList(List<Map<String, List<User>>> categoryMemberList) {
 		this.categoryMemberList = categoryMemberList;
 	}
+	
 }

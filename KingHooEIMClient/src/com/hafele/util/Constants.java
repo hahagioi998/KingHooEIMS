@@ -48,11 +48,17 @@ public class Constants {
 	/** 修改分组（user） */
 	public static String EDIT_USER_CATE_MSG = "13";
 
+	/** 用户 */
 	public static String USER = "user";
+	/** 群 */
 	public static String GROUP = "group";
+	/** 成功 */
 	public static String SUCCESS = "success";
+	/** 失败 */
 	public static String FAILURE = "failure";
+	/** 确定 */
 	public static String YES = "yes";
+	/** 取消 */
 	public static String NO = "no";
 
 	/** 空格代码 */
@@ -91,4 +97,5 @@ public class Constants {
 	
 	public static int NO_OPTION = 1;
 	public static int YES_OPTION = 0;
+	
 }

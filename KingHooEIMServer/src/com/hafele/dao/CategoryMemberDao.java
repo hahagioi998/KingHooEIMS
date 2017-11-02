@@ -1,6 +1,7 @@
 package com.hafele.dao;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,31 @@ public class CategoryMemberDao extends BaseDao {
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	/**
+	 * getByCidAndMid: 根据分组Id和成员Id查询 <br/>
+	 * @param categoryId	分组Id
+	 * @param loginName	成员Id
+	 * @return CategoryMember	<br/>
+	 * @since JDK 1.8
+	 */
+	public CategoryMember getByCidAndMid(String categoryId, String menberName) {
+		try {
+			String sql = "select * from Tab_Um_CategoryMember CM where CM.cl_CategoryID = '" + Integer.valueOf(categoryId) +"' and CM.cl_Menber_LoginName = '"+menberName+"'";
+			ResultSet result = select(sql);
+			if(result != null && result.next()) {
+				int id = result.getInt("cl_ID");
+				String loginName = result.getString("cl_LoginName");
+				int categoryID = result.getInt("cl_CategoryID");
+				String menberLoginName = result.getString("cl_Menber_LoginName");
+				return new CategoryMember(id, loginName, categoryID, menberLoginName);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

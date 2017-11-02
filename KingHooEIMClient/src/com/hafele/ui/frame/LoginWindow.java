@@ -32,11 +32,10 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.hafele.bean.Message;
 import com.hafele.socket.Client;
-import com.hafele.ui.common.CustomOptionPane;
+import com.hafele.ui.common.CustomOptionPanel;
 import com.hafele.util.Constants;
 import com.hafele.util.PictureUtil;
 import com.hafele.util.StringHelper;
-import java.awt.Label;
 
 /**
 * @author Dragon Wen E-mail:18475536452@163.com
@@ -498,11 +497,11 @@ public class LoginWindow extends JDialog {
 		String userName = userNameField.getText();
 		String password = String.valueOf(passWordField.getPassword());
 		if(StringHelper.isEmpty(userName)) {
-			CustomOptionPane.showMessageDialog(client.getLogin(), "请输入账号！", "友情提示");
+			CustomOptionPanel.showMessageDialog(client.getLogin(), "请输入账号！", "友情提示");
 			return;
 		}
 		if(StringHelper.isEmpty(password)) {
-			CustomOptionPane.showMessageDialog(client.getLogin(), "请输入密码！", "友情提示");
+			CustomOptionPanel.showMessageDialog(client.getLogin(), "请输入密码！", "友情提示");
 			return;
 		}
 		String str = userName + Constants.LEFT_SLASH + password;

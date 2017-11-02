@@ -134,6 +134,43 @@ public class ServerHandler implements ChannelInboundHandler {
 			backMsg.setPalindType(Constants.LOGIN_MSG);
 			Server.sendMsg(channel, backMsg);//向客户端回传请求结果
 		}
+		//添加好友
+		if(message != null && Constants.REQUEST_ADD_MSG.equals(message.getType())) {
+			Message backMsg = new Message();
+			String content[] = message.getContent().split(Constants.LEFT_SLASH);
+			User user = userDao.getListByUIdAndName(content[1]);
+			if(user != null) {
+				Category category = categoryDao.getById(content[0]);
+				CategoryMember categoryMember = categoryMemberDao.getByCidAndMid(category.getId(),user.getLoginName());
+				if(categoryMember != null) {//已经是你的好友
+					backMsg.setContent("对方已经是您的好友，请不要重复添加！");
+					backMsg.setStatus(Constants.FAILURE);
+					backMsg.setType(Constants.PALIND_MSG);
+					backMsg.setPalindType(Constants.REQUEST_ADD_MSG);
+					Server.sendMsg(channel, backMsg);
+				} else {
+					backMsg.setContent("请求已发送，静待对方回答！");
+					backMsg.setType(Constants.PALIND_MSG);
+					backMsg.setPalindType(Constants.REQUEST_ADD_MSG);
+					Server.sendMsg(channel, backMsg);
+					//告诉接收者
+					backMsg.setType(Constants.REQUEST_ADD_MSG);
+					backMsg.setSenderId(message.getSenderId());
+					backMsg.setSenderName(message.getSenderName());
+					backMsg.setContent(content[0]);// 将群组id带过去
+					Server.sendMsg(clientMap.get(user.getLoginName()), backMsg);
+				}
+			} else {
+				backMsg.setType(Constants.PALIND_MSG);
+				backMsg.setStatus(Constants.FAILURE);
+				backMsg.setContent("用户不存在");
+				Server.sendMsg(channel, backMsg);
+			}
+		}
+		//删除分组
+		if(message != null && Constants.DELETE_USER_CATE_MSG.equals(message.getType())) {
+			
+		}
 		//添加分组
 		if(message != null && Constants.ADD_USER_CATE_MSG.equals(message.getType())) {
 			Message backMsg = new Message();
@@ -156,8 +193,10 @@ public class ServerHandler implements ChannelInboundHandler {
 			Server.sendMsg(channel, backMsg);
 		}
 	}
-
-	//登录事件处理
+	
+	/**
+	 * 登录事件处理
+	 * */
 	private Message login(Message message, Channel channel) {
 		// TODO Auto-generated method stub
 		String content = message.getContent();

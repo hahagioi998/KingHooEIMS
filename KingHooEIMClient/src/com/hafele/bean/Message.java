@@ -43,8 +43,11 @@ public class Message {
 	private List<String> list;
 	
 	private User user;
+	/** 搜索分组返回值 */
 	private List<Category> categoryList;
+	
 	private List<Map<String, List<User>>> categoryMemberList;
+	
 
 	public Message() {
 		
@@ -68,7 +71,6 @@ public class Message {
 		this.categoryMemberList = categoryMemberList;
 	}
 
-	
 	public String getSenderId() {
 		return senderId;
 	}
@@ -196,5 +198,4 @@ public class Message {
 	public void setCategoryMemberList(List<Map<String, List<User>>> categoryMemberList) {
 		this.categoryMemberList = categoryMemberList;
 	}
-	
 }

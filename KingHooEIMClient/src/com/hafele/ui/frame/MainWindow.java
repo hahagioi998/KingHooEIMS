@@ -27,7 +27,7 @@ import javax.swing.WindowConstants;
 
 import com.hafele.bean.User;
 import com.hafele.socket.Client;
-import com.hafele.ui.common.CustomOptionPane;
+import com.hafele.ui.common.CustomOptionPanel;
 import com.hafele.ui.contacts.ContactsPanel;
 import com.hafele.ui.conversation.ConversationPanel;
 import com.hafele.ui.discussiongroup.DiscussionGroupPanel;
@@ -86,10 +86,10 @@ public class MainWindow extends JDialog {
 	private boolean isGroup = false;
 	/** 是否选中会话选项框 */
 	private boolean isConversation = false;
-	/** 是否选关闭所有声音 */
-	private boolean isCloseAllVoice = false;
-	/** 是否选关闭头像闪动 */
-	private boolean isCloseHeadFlashing = false;
+//	/** 是否选关闭所有声音 */
+//	private boolean isCloseAllVoice = false;
+//	/** 是否选关闭头像闪动 */
+//	private boolean isCloseHeadFlashing = false;
 	
 	/** 用户头像 */
 	private JLabel headPicture;
@@ -435,7 +435,7 @@ public class MainWindow extends JDialog {
 				if(e.getClickCount() == 1) {
 					if(signatureField.isVisible()) {
 						if(!"".equals(signatureField.getText())) {
-							CustomOptionPane.showMessageDialog(client.getMainWindow(), "确定要保存个性签名", "提示");
+							CustomOptionPanel.showMessageDialog(client.getMainWindow(), "确定要保存个性签名", "提示");
 							user.setSignature(signatureField.getText().trim());
 							signatureLabel.setText(user.getSignature());
 						}

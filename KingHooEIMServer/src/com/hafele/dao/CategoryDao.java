@@ -4,8 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.hafele.bean.Category;
+import com.hafele.bean.User;
 import com.hafele.util.StringHelper;
 
 /**
@@ -50,7 +52,7 @@ public class CategoryDao extends BaseDao {
 				sql += " and C.cl_Type = '"+type+"' ";
 			}
 			result = select(sql);
-			while (null != result && result.next()) {
+			while (result != null && result.next()) {
 				Category category = assembleCategory(result);
 				list.add(category);
 			}
@@ -114,7 +116,6 @@ public class CategoryDao extends BaseDao {
 		return null;
 	}
 
-
 	//组装数据
 	private Category assembleCategory(ResultSet result) {
 		try {
@@ -129,4 +130,6 @@ public class CategoryDao extends BaseDao {
 		}
 		return null;
 	}
+
+	
 }
