@@ -131,5 +131,27 @@ public class CategoryDao extends BaseDao {
 		return null;
 	}
 
+	/**
+	 * getByCondition: 通过所属者Id、分组类型、分组名称来查询	<br/>
+	 * @param ownerId 所属者Id
+	 * @param type 分组类型
+	 * @param name 分组名称
+	 * @return Category	<br/>
+	 * @since JDK 1.8
+	 */
+	public Category getByCondition(String ownerId, String type, String name) {
+		String sql = "select * from Tab_Um_Category C where C.cl_LoginName = '" + ownerId +"' and C.cl_Type = '" + type +"' and C.cl_Name = '" + name +"'";
+		try {
+			ResultSet result = select(sql);
+			if (null != result && result.next()) {
+				return assembleCategory(result);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	
 }

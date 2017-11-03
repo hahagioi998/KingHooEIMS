@@ -45,8 +45,8 @@ public class CustomOptionPanel {
 	 * @param content 内容
 	 * @return 0：确定 1：取消
 	 */
-	public static int showConfirmDialog(Component owner, String title, String content, String okButtonStr, String quitButtonStr) {
-		JDialog dialog = createConfirmDialog(owner, title, content, okButtonStr, quitButtonStr);
+	public static int showConfirmDialog(Component owner, String title, String content, String leftButtonStr, String rightButtonStr) {
+		JDialog dialog = createConfirmDialog(owner, title, content, leftButtonStr, rightButtonStr);
 		if (null == owner) {
 			dialog.setLocationRelativeTo(null);
 		} else {
@@ -158,7 +158,7 @@ public class CustomOptionPanel {
 		okButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				okButton.setIcon(PictureUtil.getPicture("okButtonActive.png"));
+				okButton.setIcon(PictureUtil.getPicture("okButton_Active.png"));
 			}
 
 			@Override
@@ -176,8 +176,8 @@ public class CustomOptionPanel {
 	}
 
 	/** 创建消息提示框,带一个确认按钮和一个取消按钮*/
-	private static JDialog createConfirmDialog(Component owner, String title, String content, String okButtonStr,
-			String quitButtonStr) {
+	private static JDialog createConfirmDialog(Component owner, String title, String content, String leftButtonStr,
+			String rightButtonStr) {
 		final Point point = new Point();
 		final JDialog dialog = getDialog(owner, title);
 		
@@ -239,12 +239,12 @@ public class CustomOptionPanel {
 		panel.add(downPanel);
 		
 		final JLabel okButton = new JLabel();
-		okButton.setIcon(PictureUtil.getPicture("okbutton.png"));
+		okButton.setIcon(PictureUtil.getPicture(leftButtonStr + ".png"));
 		okButton.setBounds(142, 7, 80, 32);
 		downPanel.add(okButton);
 		
 		final JLabel cancelButton = new JLabel("");
-		cancelButton.setIcon(PictureUtil.getPicture("cancelButton.png"));
+		cancelButton.setIcon(PictureUtil.getPicture(rightButtonStr + ".png"));
 		cancelButton.setBounds(233, 7, 80, 32);
 		downPanel.add(cancelButton);
 		
@@ -286,12 +286,12 @@ public class CustomOptionPanel {
 		okButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				okButton.setIcon(PictureUtil.getPicture("okButtonActive.png"));
+				okButton.setIcon(PictureUtil.getPicture(leftButtonStr + "_Active.png"));
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				okButton.setIcon(PictureUtil.getPicture("okButton.png"));
+				okButton.setIcon(PictureUtil.getPicture(leftButtonStr + ".png"));
 			}
 
 			@Override
@@ -305,12 +305,12 @@ public class CustomOptionPanel {
 		cancelButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				cancelButton.setIcon(PictureUtil.getPicture("cancelButton_Active.png"));
+				cancelButton.setIcon(PictureUtil.getPicture(rightButtonStr + "_Active.png"));
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				cancelButton.setIcon(PictureUtil.getPicture("cancelButton.png"));
+				cancelButton.setIcon(PictureUtil.getPicture(rightButtonStr + ".png"));
 			}
 
 			@Override

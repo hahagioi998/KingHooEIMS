@@ -271,7 +271,7 @@ public class ContactsPanel extends JPanel {
 										return;
 									}
 									int result = CustomOptionPanel.showConfirmDialog(selfClient.getMainWindow(), 
-											"删除分组", "删除分组之后，分组下面的成员也会被删掉，也会将您从对方的好友列表里删除!", "确定", "取消");
+											"删除分组", "删除分组之后，分组下面的成员也会被删掉，也会将您从对方的好友列表里删除!", "okButton", "cancelButton");
 									if(result == Constants.YES_OPTION) {
 										Message message = new Message();
 										message.setType(Constants.DELETE_USER_CATE_MSG);

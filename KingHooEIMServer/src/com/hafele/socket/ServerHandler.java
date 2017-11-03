@@ -163,8 +163,73 @@ public class ServerHandler implements ChannelInboundHandler {
 			} else {
 				backMsg.setType(Constants.PALIND_MSG);
 				backMsg.setStatus(Constants.FAILURE);
+				backMsg.setPalindType(Constants.REQUEST_ADD_MSG);
 				backMsg.setContent("用户不存在");
 				Server.sendMsg(channel, backMsg);
+			}
+		}
+		//回应添加好友 
+		if(message != null && Constants.ECHO_ADD_MSG.equals(message.getType())) {
+			String content[] = message.getContent().split(Constants.LEFT_SLASH);
+			if(Constants.YES.equals(content[1])) {
+				//要保存的成员ID
+				String memberId = message.getSenderId();//回应方
+				String ownerId = message.getReceiverId();//请求方
+				//把回应方也加到请求方的好友列表
+				//请求方
+				Category category = categoryDao.getById(content[0]);
+				if(category != null) {
+					CategoryMember categoryMember = categoryMemberDao.saveCategoryMember(ownerId, category.getId(), memberId);
+					if(categoryMember != null) {
+						User self = userDao.getById(ownerId);
+						User contacts = userDao.getById(memberId);
+						List<Category> categoryList = categoryDao.getListByUIdAndType(self.getLoginName(), Constants.USER);
+						Message backMsg = new Message();
+						backMsg.setType(Constants.PALIND_MSG);
+						backMsg.setUser(self);
+						backMsg.setCategoryList(categoryList);
+						backMsg.setCategoryMemberList(getMemberList(categoryList));
+						backMsg.setFriend(contacts);
+
+						backMsg.setPalindType(Constants.REQUEST_ADD_MSG);
+						backMsg.setSenderName(message.getSenderName());
+						backMsg.setContent(category.getId());
+						backMsg.setStatus(Constants.SUCCESS);
+						Server.sendMsg(clientMap.get(ownerId), backMsg);
+					}
+				}
+				// 把请求方也加到回应方的好友列表
+				// 默认分组：联系人
+				// 回应方
+				Category category2 = categoryDao.getByCondition(memberId, Constants.USER, Constants.DEFAULT_CATE);
+				if(category2 != null) {
+					CategoryMember categoryMember2 = categoryMemberDao.saveCategoryMember(memberId, category2.getId(), ownerId);
+					if(categoryMember2 != null) {
+						User user = userDao.getById(memberId);
+						User contacts = userDao.getById(ownerId);
+						List<Category> categoryList = categoryDao.getListByUIdAndType(user.getLoginName(), Constants.USER);
+						
+						Message backMsg = new Message();
+						backMsg.setType(Constants.PALIND_MSG);
+						backMsg.setUser(user);
+						backMsg.setCategoryList(categoryList);
+						backMsg.setCategoryMemberList(getMemberList(categoryList));
+						backMsg.setFriend(contacts);
+						
+						backMsg.setPalindType(Constants.ECHO_ADD_MSG);
+						backMsg.setContent(category2.getId());
+						backMsg.setStatus(Constants.SUCCESS);
+						Server.sendMsg(channel, backMsg);
+					}
+				}
+			}
+			if(Constants.NO.equals(content[1])) {
+				Message backMsg = new Message();
+				backMsg.setType(Constants.PALIND_MSG);
+				backMsg.setStatus(Constants.FAILURE);
+				backMsg.setPalindType(Constants.REQUEST_ADD_MSG);
+				backMsg.setContent(message.getSenderName() + "拒绝了您的好友请求！");
+				Server.sendMsg(clientMap.get(message.getReceiverId()), backMsg);
 			}
 		}
 		//删除分组

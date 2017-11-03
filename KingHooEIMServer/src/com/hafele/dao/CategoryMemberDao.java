@@ -63,5 +63,26 @@ public class CategoryMemberDao extends BaseDao {
 		}
 		return null;
 	}
+	
+	/**
+	 * saveCategoryMember: 保存分组、成员关系	<br/>
+	 * @param categoryId	分组Id
+	 * @param ownerId	所属者Id
+	 * @param memberId	成员Id
+	 * @return CategoryMember	<br/>
+	 * @since JDK 1.8
+	 */
+	public CategoryMember saveCategoryMember(String ownerId, String categoryId, String memberId) {
+		CategoryMember categoryMember = getByCidAndMid(categoryId, memberId);
+		if(categoryMember != null) {
+			return categoryMember;
+		}
+		String sql = "insert into Tab_Um_CategoryMember values ( " + ownerId + "," + Integer.valueOf(categoryId) + "," + memberId + ")";
+		int num = operate(sql);
+		if(num > 0) {
+			return getByCidAndMid(categoryId, memberId);
+		}
+		return null;
+	}
 
 }

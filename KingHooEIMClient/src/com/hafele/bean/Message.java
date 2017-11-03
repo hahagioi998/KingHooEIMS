@@ -167,6 +167,14 @@ public class Message {
 		this.palindType = palindType;
 	}
 	
+	public User getFriend() {
+		return friend;
+	}
+
+	public void setFriend(User friend) {
+		this.friend = friend;
+	}
+
 	public User getUser() {
 		return user;
 	}

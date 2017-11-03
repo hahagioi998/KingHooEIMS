@@ -56,7 +56,6 @@ public class ClientHandler implements ChannelInboundHandler {
 		System.out.println(ctx.channel().remoteAddress() + "服务器挂了！");
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		// TODO Auto-generated method stub
@@ -84,34 +83,74 @@ public class ClientHandler implements ChannelInboundHandler {
 					CustomOptionPanel.showMessageDialog(client.getLogin(), message.getContent(), "友情提示");
 				}
 			}
-		}
-		//添加好友
-		if(Constants.REQUEST_ADD_MSG.equals(message.getPalindType())) {
-			if(Constants.SUCCESS.equals(message.getStatus())) {
-				if(client.getAddContactsWindow() != null) {
-					CustomOptionPanel.showMessageDialog(client.getAddContactsWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
-					client.getAddContactsWindow().dispose();
-					client.setAddContactsWindow(null);
+			//请求添加好友
+			if(Constants.REQUEST_ADD_MSG.equals(message.getPalindType())) {
+				if(Constants.SUCCESS.equals(message.getStatus())) {
+					if(client.getAddContactsWindow() != null) {
+						CustomOptionPanel.showMessageDialog(client.getAddContactsWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
+						client.getAddContactsWindow().dispose();
+						client.setAddContactsWindow(null);
+					} else {
+						CustomOptionPanel.showMessageDialog(client.getMainWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
+					}
+					//将数据更新到最新
+					client.setUser(message.getUser());
+					client.setCategoryList(message.getCategoryList());
+					client.setCategoryMemberList(message.getCategoryMemberList());
+					//刷新tree
+					CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
+					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
+					categoryNode.add(contactsNode);
+					client.getBuddyModel().reload(client.getBuddyRoot());
+					client.buddyNodeMap.put(message.getUser().getName(), contactsNode);
 				} else {
-					CustomOptionPanel.showMessageDialog(client.getMainWindow(), message.getSenderName()+"同意了您的好友请求！", "提示");
+					CustomOptionPanel.showMessageDialog(client.getAddContactsWindow(), message.getContent(), "提示");
+					if(!Constants.FAILURE.equals(message.getStatus())) {
+						if(client.getAddContactsWindow() != null) {
+							client.getAddContactsWindow().dispose();
+							client.setAddContactsWindow(null);
+						}
+					}
 				}
-				//将数据更新到最新
-				client.setUser(message.getUser());
-				client.setCategoryList(message.getCategoryList());
-				client.setCategoryMemberList(message.getCategoryMemberList());
-				//刷新tree
-				CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
-				ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
-				
+			}
+			//回应添加好友
+			if(Constants.ECHO_ADD_MSG.equals(message.getPalindType())) {
+				if(Constants.SUCCESS.equals(message.getStatus())) {
+					//刷新Tree
+					CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
+					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
+					categoryNode.add(contactsNode);
+					client.getBuddyModel().reload(client.getBuddyRoot());
+					client.buddyNodeMap.put(message.getUser().getName(), contactsNode);
+				}
+				if(Constants.FAILURE.equals(message.getStatus())) {
+					CustomOptionPanel.showMessageDialog(client.getMainWindow(), message.getContent(), "提示");
+				}
+			}
+			//添加分组
+			if (Constants.ADD_USER_CATE_MSG.equals(message.getPalindType())) {
+				Category category = message.getCategory();
+				CategoryNode categoryNode = new CategoryNode(PictureUtil.getPicture("arrow_left.png"), category);
+				client.getBuddyRoot().add(categoryNode);
+				client.getBuddyModel().reload();
+				client.cateNodeMap.put(category.getId(), categoryNode);
 			}
 		}
-		//添加分组
-		if (Constants.ADD_USER_CATE_MSG.equals(message.getPalindType())) {
-			Category category = message.getCategory();
-			CategoryNode categoryNode = new CategoryNode(PictureUtil.getPicture("arrow_left.png"), category);
-			client.getBuddyRoot().add(categoryNode);
-			client.getBuddyModel().reload();
-			client.cateNodeMap.put(category.getId(), categoryNode);
+		//请求添加好友
+		if(message != null && Constants.REQUEST_ADD_MSG.equals(message.getType())) {
+			int result = CustomOptionPanel.showConfirmDialog(client.getMainWindow(), "添加好友请求", message.getSenderName() + "想添加您为好友", "agreeButton", "refuseButton");
+			Message backMsg = new Message();
+			backMsg.setType(Constants.ECHO_ADD_MSG);
+			backMsg.setSenderId(client.getUser().getLoginName());
+			backMsg.setSenderName(client.getUser().getName());
+			backMsg.setReceiverId(message.getSenderId());
+			backMsg.setReceiverName(message.getSenderName());
+			if(result == Constants.YES_OPTION) {
+				backMsg.setContent(message.getContent() + Constants.LEFT_SLASH + Constants.YES);
+			} else if(result == Constants.NO_OPTION) {
+				backMsg.setContent(message.getContent() + Constants.LEFT_SLASH + Constants.NO);
+			}
+			client.sendMsg(backMsg);
 		}
 	}
 
