@@ -234,7 +234,27 @@ public class ServerHandler implements ChannelInboundHandler {
 		}
 		//删除分组
 		if(message != null && Constants.DELETE_USER_CATE_MSG.equals(message.getType())) {
-			
+			Message backMsg = new Message();
+			backMsg.setType(Constants.DELETE_USER_CATE_MSG);
+			backMsg.setPalindType(Constants.DELETE_USER_CATE_MSG);
+			String content[] = message.getContent().split(Constants.LEFT_SLASH);
+			Category category = categoryDao.getById(content[0]);
+			List<CategoryMember> list = categoryMemberDao.getListByCategoryId(category.getId());
+			categoryDao.deleteByOidAndMid(category.getId());//删除分组
+			for(CategoryMember cm : list) {
+				categoryMemberDao.delete(cm.getId());
+				//删除对方数据
+				categoryMemberDao.deleteByOidAndMid(cm.getMemberLoginName(), message.getSenderId());
+				Message backMsg2 = new Message();
+				backMsg2.setType(Constants.PALIND_MSG);
+				backMsg2.setPalindType(Constants.DELETE_USER_MEMBER_MSG);
+				backMsg2.setContent(message.getSenderName());
+				Server.sendMsg(clientMap.get(cm.getMemberLoginName()), backMsg2);
+				
+			}
+			backMsg.setContent(category.getId());
+			backMsg.setList(getMemberNameList(list));
+			Server.sendMsg(channel, backMsg);
 		}
 		//添加分组
 		if(message != null && Constants.ADD_USER_CATE_MSG.equals(message.getType())) {
@@ -257,8 +277,27 @@ public class ServerHandler implements ChannelInboundHandler {
 			backMsg.setCategory(category);
 			Server.sendMsg(channel, backMsg);
 		}
+		System.err.println("map大小:" + map.size());
+		System.err.println("clientMap大小:" + clientMap.size());
 	}
 	
+	/**
+	 * 分组下面的成员昵称
+	 * @param list 分组下的成员集合
+	 * @return
+	 */
+	private List<String> getMemberNameList(List<CategoryMember> list) {
+		List<String> strList = new ArrayList<String>();
+		if (null != list && list.size() > 0) {
+			for(CategoryMember cm : list) {
+				User user = userDao.getById(cm.getMemberLoginName());
+				strList.add(user.getName());
+			}
+			return strList;  
+		}
+		return null;
+	}
+
 	/**
 	 * 登录事件处理
 	 * */

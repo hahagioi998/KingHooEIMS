@@ -35,7 +35,7 @@ public class Message {
 	/** 回文类型 */
 	private String palindType;
 	// 图片
-	private String imageMark;
+//	private String imageMark;
 	
 	private String status;
 	private User friend;
@@ -181,6 +181,14 @@ public class Message {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public List<String> getList() {
+		return list;
+	}
+
+	public void setList(List<String> list) {
+		this.list = list;
 	}
 
 	public Category getCategory() {

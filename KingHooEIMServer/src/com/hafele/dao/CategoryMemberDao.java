@@ -85,4 +85,23 @@ public class CategoryMemberDao extends BaseDao {
 		return null;
 	}
 
+	/**
+	 * 删除CategoryMember
+	 * @param id 数据库主键
+	 */
+	public void delete(int id) {
+		String sql = "delete from Tab_Um_CategoryMember where cl_ID = " + Integer.valueOf(id);
+		operate(sql);
+	}
+
+	/**
+	 * 删除CategoryMember
+	 * @param ownerId 所属者Id
+	 * @param memberId 成员Id
+	 */
+	public void deleteByOidAndMid(String ownerId, String memberId) {
+		String sql = "delete from Tab_Um_CategoryMember where cl_LoginName = '" + ownerId +"' and cl_Menber_LoginName = '"+ memberId +"'";
+		operate(sql);
+	}
+
 }

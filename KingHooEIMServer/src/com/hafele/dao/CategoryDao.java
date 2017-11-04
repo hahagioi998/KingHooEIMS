@@ -4,10 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.hafele.bean.Category;
-import com.hafele.bean.User;
 import com.hafele.util.StringHelper;
 
 /**
@@ -151,6 +149,15 @@ public class CategoryDao extends BaseDao {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * 删除分组
+	 * @param id 分组Id
+	 */
+	public void deleteByOidAndMid(String id) {
+		String sql = "delete from Tab_Um_Category where cl_ID = " + Integer.valueOf(id);
+		operate(sql);
 	}
 
 	

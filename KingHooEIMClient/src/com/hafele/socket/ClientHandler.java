@@ -135,6 +135,29 @@ public class ClientHandler implements ChannelInboundHandler {
 				client.getBuddyModel().reload();
 				client.cateNodeMap.put(category.getId(), categoryNode);
 			}
+			//重命名分组
+			if(Constants.EDIT_USER_CATE_MSG.equals(message.getPalindType())) {
+				Category category = message.getCategory();
+				CategoryNode categoryNode = client.cateNodeMap.get(category.getId());
+				categoryNode.category = category;
+				categoryNode.categoryName.setText(category.getGroupName());
+			}
+			//删除分组
+			if(Constants.DELETE_USER_CATE_MSG.equals(message.getPalindType())) {
+				CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
+				client.getBuddyRoot().remove(categoryNode);
+				client.getBuddyModel().reload();//需要从根节点刷新
+				client.cateNodeMap.remove(message.getContent());//清空记录
+			}
+			//删除成员
+			if(Constants.DELETE_USER_MEMBER_MSG.equals(message.getPalindType())) {
+				//刷新tree
+				ContactsNode contactsNode = client.buddyNodeMap.get(message.getContent());
+				CategoryNode categoryNode = (CategoryNode) contactsNode.getParent();
+				categoryNode.remove(contactsNode);
+				client.getBuddyModel().reload(categoryNode);
+				client.buddyNodeMap.remove(message.getContent());//清空记录
+			}
 		}
 		//请求添加好友
 		if(message != null && Constants.REQUEST_ADD_MSG.equals(message.getType())) {

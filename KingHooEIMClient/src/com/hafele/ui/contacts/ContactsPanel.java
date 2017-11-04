@@ -277,7 +277,7 @@ public class ContactsPanel extends JPanel {
 										message.setType(Constants.DELETE_USER_CATE_MSG);
 										message.setSenderId(selfClient.getUser().getLoginName());
 										message.setSenderName(selfClient.getUser().getName());
-										message.setContent(category.getGroupName() + Constants.LEFT_SLASH + category.getGroupName());
+										message.setContent(category.getId() + Constants.LEFT_SLASH + category.getGroupName());
 										selfClient.sendMsg(message);
 									}else {
 										return;
@@ -338,8 +338,7 @@ public class ContactsPanel extends JPanel {
 							jpm.add(mit4);
 							jpm.add(mit5);
 							mit5.add(mit6);
-							jpm.addSeparator();//增加分割线！！！
-							
+							jpm.add(mit7);
 							
 							jpm.show(jTree, e.getX(), e.getY());
 						}	

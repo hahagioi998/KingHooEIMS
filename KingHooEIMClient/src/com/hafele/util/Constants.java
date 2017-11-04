@@ -45,7 +45,7 @@ public class Constants {
 	public static String DELETE_USER_MEMBER_MSG = "11";
 	/** 添加分组（user） */
 	public static String ADD_USER_CATE_MSG = "12";
-	/** 修改分组（user） */
+	/** 重命名分组（user） */
 	public static String EDIT_USER_CATE_MSG = "13";
 
 	/** 用户 */
