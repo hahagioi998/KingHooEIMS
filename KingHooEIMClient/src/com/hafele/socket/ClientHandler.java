@@ -20,7 +20,7 @@ import io.netty.channel.ChannelInboundHandler;
 /**
 * @author Dragon Wen E-mail:18475536452@163.com
 * @version 创建时间：2017年10月19日 下午2:58:15
-* 类说明
+* 客户端处理服务器回文消息
 */
 public class ClientHandler implements ChannelInboundHandler {
 
@@ -99,7 +99,7 @@ public class ClientHandler implements ChannelInboundHandler {
 					client.setCategoryMemberList(message.getCategoryMemberList());
 					//刷新tree
 					CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
-					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
+					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getFriend().getHeadPicture()+"_40px.png"), message.getFriend());
 					categoryNode.add(contactsNode);
 					client.getBuddyModel().reload(client.getBuddyRoot());
 					client.buddyNodeMap.put(message.getUser().getName(), contactsNode);
@@ -118,7 +118,7 @@ public class ClientHandler implements ChannelInboundHandler {
 				if(Constants.SUCCESS.equals(message.getStatus())) {
 					//刷新Tree
 					CategoryNode categoryNode = client.cateNodeMap.get(message.getContent());
-					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getUser().getHeadPicture()+"_40px.png"), message.getUser());
+					ContactsNode contactsNode = new ContactsNode(PictureUtil.getPicture(message.getFriend().getHeadPicture()+"_40px.png"), message.getFriend());
 					categoryNode.add(contactsNode);
 					client.getBuddyModel().reload(client.getBuddyRoot());
 					client.buddyNodeMap.put(message.getUser().getName(), contactsNode);
