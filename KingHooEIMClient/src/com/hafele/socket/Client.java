@@ -14,6 +14,8 @@ import com.hafele.bean.Category;
 import com.hafele.bean.Message;
 import com.hafele.bean.User;
 import com.hafele.ui.common.CategoryNode;
+import com.hafele.ui.common.ChatRoom;
+import com.hafele.ui.common.ChatRoomPanel;
 import com.hafele.ui.contacts.ContactsNode;
 import com.hafele.ui.frame.AddContactsWindow;
 import com.hafele.ui.frame.LoginWindow;
@@ -52,7 +54,7 @@ public class Client {
 	/** 添加好友框 */
 	private AddContactsWindow addContactsWindow;
 	/** 聊天室 */
-
+	private ChatRoom room;
 	/** 系统托盘 */
 	private TrayIcon icon;
 	/** 好友tree */
@@ -63,7 +65,7 @@ public class Client {
 	private DefaultMutableTreeNode buddyRoot;
 	
 	/** key：好友名称 value：tab块 */
-
+	public Map<String, ChatRoomPanel> tabMap = new HashMap<String, ChatRoomPanel>();
 	/** key：好友名称 value：node节点 */
 	public Map<String, ContactsNode> buddyNodeMap = new HashMap<String, ContactsNode>();
 	/** key：分组Id value：node节点 */
@@ -143,6 +145,14 @@ public class Client {
 
 	public void setAddContactsWindow(AddContactsWindow addContactsWindow) {
 		this.addContactsWindow = addContactsWindow;
+	}
+	
+	public ChatRoom getRoom() {
+		return room;
+	}
+
+	public void setRoom(ChatRoom room) {
+		this.room = room;
 	}
 
 	public Channel getChannel() {

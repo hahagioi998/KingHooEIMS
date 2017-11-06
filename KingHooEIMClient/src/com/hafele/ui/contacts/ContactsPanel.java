@@ -196,8 +196,29 @@ public class ContactsPanel extends JPanel {
 						}
 					}
 					if(e.getClickCount() == 2) {
+						//好友node节点（区分群组）
 						if (object instanceof ContactsNode) {
-							
+							//从根节点开始获取所有节点（第一层全部是分组）
+							for(int i = 0; i < root.getChildCount(); i++) {
+								//鼠标滑入好友node节点时，需要将分组上面的颜色恢复
+								Object category = root.getChildAt(i);
+								((CategoryNode)category).categoryContent.setBackground(Constants.BACKGROUND_COLOR);
+								model.reload((CategoryNode)category);//刷新UI
+								//这一层全是好友node节点
+								for(int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+									Object friend = root.getChildAt(i).getChildAt(j);
+									// 不是鼠标选中的那个
+									if(friend != (ContactsNode)object) {
+										((ContactsNode)friend).userContent.setBackground(Constants.BACKGROUND_COLOR);
+									} else {
+										((ContactsNode)friend).userContent.setBackground(selectColor);
+										//开启聊天窗口
+//										Message message = null;
+//										User user = ((ContactsNode)object).contacts;
+										
+									}
+								}
+							}
 						}
 					}
 				}
