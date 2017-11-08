@@ -1,4 +1,4 @@
-package com.hafele.ui.common;
+package com.hafele.ui.frame;
 
 import javax.swing.JPanel;
 
