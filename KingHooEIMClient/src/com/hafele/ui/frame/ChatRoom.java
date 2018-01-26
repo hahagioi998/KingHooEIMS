@@ -80,7 +80,8 @@ public class ChatRoom extends JFrame {
 			setContentPane(contentPane);
 			
 			titleLabel = new JLabel();
-			titleLabel.setFont(Constants.BASIC_FONT);
+			titleLabel.setFont(Constants.BASIC_FONTT14);
+			titleLabel.setForeground(Color.WHITE);
 			titleLabel.setBounds(10, 0, 573, 30);
 			contentPane.add(titleLabel);
 			

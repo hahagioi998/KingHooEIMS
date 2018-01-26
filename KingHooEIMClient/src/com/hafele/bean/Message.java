@@ -34,8 +34,15 @@ public class Message {
 	private String type;
 	/** 回文类型 */
 	private String palindType;
+	
+	// TODO 文字样式
+	private Integer size;
+	private String family;
+	private Integer back;
+	private Integer fore;
+	private Integer style;
 	// 图片
-//	private String imageMark;
+	private String imageMark;
 	
 	private String status;
 	private User friend;
@@ -214,4 +221,53 @@ public class Message {
 	public void setCategoryMemberList(List<Map<String, List<User>>> categoryMemberList) {
 		this.categoryMemberList = categoryMemberList;
 	}
+
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+
+	public String getFamily() {
+		return family;
+	}
+
+	public void setFamily(String family) {
+		this.family = family;
+	}
+
+	public Integer getBack() {
+		return back;
+	}
+
+	public void setBack(Integer back) {
+		this.back = back;
+	}
+
+	public Integer getFore() {
+		return fore;
+	}
+
+	public void setFore(Integer fore) {
+		this.fore = fore;
+	}
+
+	public Integer getStyle() {
+		return style;
+	}
+
+	public void setStyle(Integer style) {
+		this.style = style;
+	}
+
+	public String getImageMark() {
+		return imageMark;
+	}
+
+	public void setImageMark(String imageMark) {
+		this.imageMark = imageMark;
+	}
+	
 }

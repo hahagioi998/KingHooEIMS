@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -71,8 +72,9 @@ public class Client {
 	/** key：分组Id value：node节点 */
 	public Map<String, CategoryNode> cateNodeMap = new HashMap<String, CategoryNode>();
 	/** key：好友名称 value：消息浏览状态 （用于确定头像的闪动） */
-	
+	public Map<String, Boolean> msgStatusMap = new HashMap<String, Boolean>();
 	/** key：好友名称 value：消息队列 （便于放到聊天窗中） */
+	public Map<String, Queue<Message>> msgQueMap = new HashMap<String, Queue<Message>>();
 	
 	// 自身信息
 	private User user;

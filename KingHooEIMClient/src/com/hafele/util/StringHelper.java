@@ -1589,4 +1589,12 @@ public final class StringHelper {
 			return str;
 	}
 
+	/**
+	 * 创建发送人信息
+	 * @param senderName 发送人姓名
+	 * @return
+	 */
+	public static String createSenderInfo(String senderName) {
+		return senderName + Constants.SPACE + TimeUtil.getCurrentTime() + Constants.NEWLINE;
+	}
 }

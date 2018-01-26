@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -21,6 +22,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -32,10 +37,15 @@ import com.hafele.socket.Client;
 import com.hafele.ui.common.CategoryNode;
 import com.hafele.ui.common.CustomOptionPanel;
 import com.hafele.ui.common.CustomScrollBarUI;
+import com.hafele.ui.common.CustomTabComponent;
 import com.hafele.ui.common.CustomTreeUI;
+import com.hafele.ui.common.Emoticon;
 import com.hafele.ui.frame.AddContactsWindow;
+import com.hafele.ui.frame.ChatRoom;
+import com.hafele.ui.frame.ChatRoomPanel;
 import com.hafele.util.Constants;
 import com.hafele.util.PictureUtil;
+import com.hafele.util.StringHelper;
 
 /**
 * @author Dragon Wen E-mail:18475536452@163.com
@@ -213,10 +223,133 @@ public class ContactsPanel extends JPanel {
 									} else {
 										((ContactsNode)friend).userContent.setBackground(selectColor);
 										//开启聊天窗口
-//										Message message = null;
-//										User user = ((ContactsNode)object).contacts;
-										
+										Message message = null;
+										User user = ((ContactsNode)object).contacts;
+										ChatRoom room = selfClient.getRoom() == null ? 
+												ChatRoom.getInstance(selfClient) : selfClient.getRoom();
+										// 相应好友的panel没打开
+										if (!selfClient.tabMap.containsKey(user.getName())) {
+											room.setTitle(selfClient.getUser().getName() + " —— " + user.getName());
+											room.titleLabel.setText(selfClient.getUser().getName() + " —— " + user.getName());
+											ChatRoomPanel pane = new ChatRoomPanel(selfClient, selfClient.getUser(), user);
+											room.tabbedPane.addTab(user.getName(), null, pane, user.getName());
+											// 重绘过的tab页签
+											room.tabbedPane.setTabComponentAt(room.tabbedPane.indexOfTab(user.getName()), 
+													new CustomTabComponent(selfClient.getUser().getName(), user.getName(), room, selfClient));
+											int index = room.tabbedPane.indexOfTab(user.getName());
+											room.tabbedPane.setSelectedIndex(index);
+											// 将队列里面的消息显示在面板上
+											if (selfClient.msgQueMap.size() > 0) {
+												try {
+													while ((message = selfClient.msgQueMap.get(user.getName()).poll()) != null) {
+														StyledDocument doc = pane.historyTextPane.getStyledDocument();
+														// 名称、日期
+														SimpleAttributeSet nameSet = getAttributeSet(true, null);
+														doc.insertString(doc.getLength(), StringHelper.createSenderInfo(message.getSenderName()), nameSet);
+														SimpleAttributeSet contentSet = getAttributeSet(false, message);
+														// 缩进
+														StyleConstants.setLeftIndent(contentSet, 10);
+														// 此处开始缩进
+														doc.setParagraphAttributes(doc.getLength(), doc.getLength(), contentSet, true);
+														// 正文
+														// 文字或者图文混合
+														if (!StringHelper.isEmpty(message.getContent())) {
+															// 记录下这行消息插入的光标在哪里
+															// 将光标放置到消息的最后
+															pane.position = doc.getLength();
+															doc.insertString(doc.getLength(), message.getContent(), contentSet);
+															if (!StringHelper.isEmpty(message.getImageMark()) && message.getImageMark().split("/").length > 0) {
+																for (String str : message.getImageMark().split("/")) {
+																	int imgIndex = Integer.valueOf(str.substring(str.indexOf("|")+1));// 图片的位置（下标）
+																	pane.historyTextPane.setCaretPosition(pane.position+imgIndex);// 光标
+																	String mark = str.substring(str.indexOf(")")+1, str.indexOf("|"));
+																	String fileName = "/com/hafele/resource/image/face/" + mark + ".gif";
+																	pane.historyTextPane.insertIcon(new ImageIcon(Emoticon.class.getResource(fileName)));
+																}
+															}
+														} else {// 文字为空，说明发送的全部是图片
+															for (String str : message.getImageMark().split("/")) {
+																// 此处要插入图片
+																pane.historyTextPane.setCaretPosition(doc.getLength());// 光标
+																String mark = str.substring(str.indexOf(")")+1, str.indexOf("|"));
+																String fileName = "/com/haele/resource/image/face/" + mark + ".gif";
+																pane.historyTextPane.insertIcon(new ImageIcon(Emoticon.class.getResource(fileName)));
+															}
+														}
+														// 换行
+														doc.insertString(doc.getLength(), "\n", contentSet);
+														// 将缩进还原回来
+														StyleConstants.setLeftIndent(contentSet, 0f);
+														doc.setParagraphAttributes(doc.getLength(), doc.getLength(), contentSet, true);
+													}
+												} catch (BadLocationException e1) {
+													e1.printStackTrace();
+												}
+											}
+											// 将room信息返回
+											selfClient.setRoom(room);
+											selfClient.tabMap.put(user.getName(), pane);
+											// 告知client，我已接受到相应好友消息
+											selfClient.msgStatusMap.put(user.getName(), false);
+//											// 告知client，下次来消息了继续闪烁
+//											selfClient.threadMap.put(user.getName(), false);
+										} else {
+											room.setTitle(selfClient.getUser().getName() + " —— " + user.getName());
+											room.titleLabel.setText(selfClient.getUser().getName() + " —— " + user.getName());
+											int index = room.tabbedPane.indexOfTab(user.getName());
+											room.tabbedPane.setSelectedIndex(index);
+											ChatRoomPanel pane = (ChatRoomPanel) room.tabbedPane.getComponentAt(index);
+											// 将队列里面的消息显示在面板上
+											if (selfClient.msgQueMap.size() > 0) {
+												try {
+													while ((message = selfClient.msgQueMap.get(user.getName()).poll()) != null) {
+														StyledDocument doc = pane.historyTextPane.getStyledDocument();
+														// 名称、日期
+														SimpleAttributeSet nameSet = getAttributeSet(true, null);
+														doc.insertString(doc.getLength(), StringHelper.createSenderInfo(message.getSenderName()), nameSet);
+														SimpleAttributeSet contentSet = getAttributeSet(false, message);
+														// 缩进
+														StyleConstants.setLeftIndent(contentSet, 10);
+														// 此处开始缩进
+														doc.setParagraphAttributes(doc.getLength(), doc.getLength(), contentSet, true);
+														// 正文
+														// 文字或者图文混合
+														if (!StringHelper.isEmpty(message.getContent())) {
+															// 记录下这行消息插入的光标在哪里
+															// 将光标放置到消息的最后
+															pane.position = doc.getLength();
+															doc.insertString(doc.getLength(), message.getContent(), contentSet);
+															if (!StringHelper.isEmpty(message.getImageMark()) && message.getImageMark().split("/").length > 0) {
+																for (String str : message.getImageMark().split("/")) {
+																	int imgIndex = Integer.valueOf(str.substring(str.indexOf("|")+1));// 图片的位置（下标）
+																	pane.historyTextPane.setCaretPosition(pane.position+imgIndex);// 光标
+																	String mark = str.substring(str.indexOf(")")+1, str.indexOf("|"));
+																	String fileName = "/com/hafele/resource/image/face/" + mark + ".gif";
+																	pane.historyTextPane.insertIcon(new ImageIcon(Emoticon.class.getResource(fileName)));
+																}
+															}
+														} else {// 文字为空，说明发送的全部是图片
+															for (String str : message.getImageMark().split("/")) {
+																// 此处要插入图片
+																pane.historyTextPane.setCaretPosition(doc.getLength());// 光标
+																String mark = str.substring(str.indexOf(")")+1, str.indexOf("|"));
+																String fileName = "/com/hafele/resource/image/face/" + mark + ".gif";
+																pane.historyTextPane.insertIcon(new ImageIcon(Emoticon.class.getResource(fileName)));
+															}
+														}
+														// 换行
+														doc.insertString(doc.getLength(), "\n", contentSet);
+														// 将缩进还原回来
+														StyleConstants.setLeftIndent(contentSet, 0f);
+														doc.setParagraphAttributes(doc.getLength(), doc.getLength(), contentSet, true);
+													}
+												} catch (BadLocationException e1) {
+													e1.printStackTrace();
+												}
+											}
+										}
 									}
+									model.reload(((ContactsNode)friend));
 								}
 							}
 						}
@@ -403,5 +536,74 @@ public class ContactsPanel extends JPanel {
 			// 更新client中好友分组的map，放到client中，为了方便统一调用
 			selfClient.cateNodeMap.put(categoryNode.category.getId(), categoryNode);
 		}
+	}
+	
+	private SimpleAttributeSet getAttributeSet(boolean isDefault, Message message) {
+		SimpleAttributeSet set = new SimpleAttributeSet();
+		if (isDefault) {
+			StyleConstants.setBold(set, false);
+			StyleConstants.setItalic(set, false);
+			StyleConstants.setFontSize(set, 15);
+			StyleConstants.setFontFamily(set, "宋体");
+			StyleConstants.setForeground(set, Color.RED);
+		} else {
+			// 字体名称
+			StyleConstants.setFontFamily(set, message.getFamily());
+			// 字号
+			StyleConstants.setFontSize(set, message.getSize());
+			// 样式
+			int styleIndex = message.getStyle();
+			if (styleIndex == 0) {// 常规
+				StyleConstants.setBold(set, false);
+				StyleConstants.setItalic(set, false);
+			}
+			if (styleIndex == 1) {// 斜体
+				StyleConstants.setBold(set, false);
+				StyleConstants.setItalic(set, true);
+			}
+			if (styleIndex == 2) {// 粗体
+				StyleConstants.setBold(set, true);
+				StyleConstants.setItalic(set, false);
+			}
+			if (styleIndex == 3) {// 粗斜体
+				StyleConstants.setBold(set, true);
+				StyleConstants.setItalic(set, true);
+			}
+			// 字体颜色
+			int foreIndex = message.getFore();
+			if (foreIndex == 0) {// 黑色
+				StyleConstants.setForeground(set, Color.BLACK);
+			}
+			if (foreIndex == 1) {// 橙色
+				StyleConstants.setForeground(set, Color.ORANGE);
+			}
+			if (foreIndex == 2) {// 黄色
+				StyleConstants.setForeground(set, Color.YELLOW);
+			}
+			if (foreIndex == 3) {// 绿色
+				StyleConstants.setForeground(set, Color.GREEN);
+			}
+			// 背景颜色
+			int backIndex = message.getBack();
+			if (backIndex == 0) {// 白色
+				StyleConstants.setBackground(set, Color.WHITE);
+			}
+			if (backIndex == 1) {// 灰色
+				StyleConstants.setBackground(set, new Color(200, 200, 200));
+			}
+			if (backIndex == 2) {// 淡红
+				StyleConstants.setBackground(set, new Color(255, 200, 200));
+			}
+			if (backIndex == 3) {// 淡蓝
+				StyleConstants.setBackground(set, new Color(200, 200, 255));
+			}
+			if (backIndex == 4) {// 淡黄
+				StyleConstants.setBackground(set, new Color(255, 255, 200));
+			}
+			if (backIndex == 5) {// 淡绿
+				StyleConstants.setBackground(set, new Color(200, 255, 200));
+			}
+		}
+		return set;
 	}
 }
