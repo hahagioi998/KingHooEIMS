@@ -18,10 +18,12 @@ public class DataConnect {
 	public static Connection getConnect() {
 		try {
 			if (null == conn) {
-				String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-				String url = "jdbc:sqlserver://127.0.0.1:1433;databaseName=db_KingHooEIM";
+//				String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+//				String url = "jdbc:sqlserver://127.0.0.1:1433;databaseName=db_KingHooEIM";
+				String driver = "com.mysql.jdbc.Driver";
+				String url = "jdbc:mysql://localhost:3306/db_kinghooeim";
 				Class.forName(driver);
-				conn = DriverManager.getConnection(url, "sa", "hafele");
+				conn = DriverManager.getConnection(url, "root", "hafele");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

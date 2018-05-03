@@ -6,6 +6,7 @@
 	<classpathentry kind="lib" path="lib/netty-all-4.0.24.Final-sources.jar"/>
 	<classpathentry kind="lib" path="lib/netty-all-4.0.24.Final.jar"/>
 	<classpathentry kind="lib" path="lib/gson-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.0.4-bin.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/KingHooEIMClient"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
